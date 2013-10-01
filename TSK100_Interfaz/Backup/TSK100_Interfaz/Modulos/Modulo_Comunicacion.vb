@@ -4,40 +4,10 @@ Imports System.IO
 Imports System.IO.Ports
 Imports System.Collections
 
-' ---------------------------------------------------------------------------------------------
-'
-' @class    SP
-'
-' @brief    Clase utilizada para definir todas las variables globales
-'
-' @var      valor
-' @var      TSK_Conectado       flag para determinar conexión o no
-' @var      horario             string para guardar la hora a mostrar
-' @var      fecha               string para mostrar la fecha
-' @var      Temperatura         valor de temperatura guardado
-' @var      adc_medido          valor de lectura del ADC recibido desde el micro
-' @var      Pendiente_Resistencia   valor recibido/enviado de pendiente de la conversión cuentas/resistencia guardada en el micro
-' @var      Offset_Resistencia      valor recibido/enviado de offset de la conversión cuentas/resistencia guardada en el micro
-' @var      adc_medido_numerador    valor recibido de cuentas de ADC correspondiente a la corriente (numerador en el calculo de división de conductividad)
-' @var      adc_medido_denominador  valor recibido de cuentas de ADC correspondiente a la tensión(denominador en el calculo de división de conductividad)
-' @var      Pendiente_Conductividad valor rx/tx de pendiente en la conversión cuentas_corriente/cuentas_tension
-' @var      Offset_Conductividad    valor rx/tx de offset en la conversión cuentas_corriente/cuentas_tension
-' @var      Lista_Archivo           lista que se muestra con los archivos almacenados en la SD del TSK
-' @var      Indice_Archivo          Archivo a seleccionar (están ordenados por núemro)
-' @var      Enviando_Nombres        Flag para señalizar si estoy enviando nombres de archivo desde el TSK a la PC
-' @var      Buffer_Externo()        ??
-' @var      Buffer_Externo_Listo    Flag ???
-' 
-' @author   Roux, Federico G.
-' @mail     rouxfederico@gmail.com
-' @company  Nerox
-'
-' --------------------------------------------------------------------------------------------- 
 
 Public Class SP
 
     Public Shared valor As Integer = 1
-
     ' Variables globales:
     Public Shared TSK_Conectado As Boolean = False
     Public Shared horario As String = "--:--:--"
@@ -89,24 +59,6 @@ Public Class SP
 
     Public Shared Estado_Recepcion As Estados_Recibir_Datos = Estados_Recibir_Datos.RECIBO_NADA
 
-
-    ' ---------------------------------------------------------------------------------------------
-    '
-    ' @function Bytes_a_Word
-    '
-    ' @brief    Recibe una cadena y el índice donde comienza un dato de 2 bytes, y lo convierte a Word
-    '
-    ' @paramin  cadena_prueba() cadena completa (frame recibido)
-    ' @paramin  indice_ini      indice donde comienza el primer byte del word a leer
-    '
-    ' @paramout Single  Valor del word extraído
-    ' 
-    ' @author   Roux, Federico G.
-    ' @mail     rouxfederico@gmail.com
-    ' @company  Nerox
-    '
-    ' --------------------------------------------------------------------------------------------- 
-
     Private Shared Function Bytes_a_Word(ByVal cadena_prueba() As Byte, ByVal indice_ini As Short) As Single
 
         Dim dato_b0, dato_b1 As Byte
@@ -141,24 +93,6 @@ Public Class SP
 
 
     End Function
-
-    ' ---------------------------------------------------------------------------------------------
-    '
-    ' @function Bytes_a_DWord   
-    '
-    ' @brief    Recibe una cadena y el índice donde comienza un dato de 4 bytes, y lo convierte a Word
-    '
-    ' @paramin  cadena_prueba() cadena completa (frame recibido)
-    ' @paramin  indice_ini      indice donde comienza el primer byte del dword a leer
-    '
-    ' @paramout Single  Valor del word extraído
-    ' 
-    ' @author   Roux, Federico G.
-    ' @mail     rouxfederico@gmail.com
-    ' @company  Nerox
-    '
-    ' --------------------------------------------------------------------------------------------- 
-
 
     Private Shared Function Bytes_a_DWord(ByVal cadena_prueba() As Byte, ByVal indice_ini As Short) As Single
 
@@ -217,22 +151,6 @@ Public Class SP
 
     End Function
 
-    ' ---------------------------------------------------------------------------------------------
-    '
-    ' @function Crear_Puerto       
-    '
-    ' @brief    Recibe el número del COM a configurar y abre el puerto creando el objeto
-    '
-    ' @paramin  PortName_Ingresado  Número del COM a abrir
-    '
-    ' @paramout none
-    ' 
-    ' @author   Roux, Federico G.
-    ' @mail     rouxfederico@gmail.com
-    ' @company  Nerox
-    '
-    ' --------------------------------------------------------------------------------------------- 
-
     Public Shared Sub Crear_Puerto(ByVal PortName_Ingresado)
 
         Try
@@ -264,22 +182,6 @@ Public Class SP
 
     End Sub
 
-    ' ---------------------------------------------------------------------------------------------
-    '
-    ' @function DataReceived       
-    '
-    ' @brief    Handler de la interrupción de la recepción de puerto serie  
-    '
-    ' @paramin  PortName_Ingresado  Número del COM a abrir
-    '
-    ' @paramout none
-    ' 
-    ' @author   Roux, Federico G.
-    ' @mail     rouxfederico@gmail.com
-    ' @company  Nerox
-    '
-    ' --------------------------------------------------------------------------------------------- 
-
     Shared Sub DataReceived(ByVal sender As Object, ByVal e As System.IO.Ports.SerialDataReceivedEventArgs) _
     Handles _serialPort.DataReceived
 
@@ -301,8 +203,7 @@ Public Class SP
         Dim cadena_prueba() As Byte = {&H0, &H0, &H0, &H0, &H0, &H0, &H0, &H0, &H0, &H0, _
                                        &H0, &H0, &H0, &H0, &H0, &H0, &H0, &H0, &H0, &H0, _
                                        &H0, &H0, &H0, &H0, &H0, &H0, &H0, &H0, &H0, &H0}
-        ' Dim CRC_Recibido As Integer
-        Dim chk_recibido As Integer
+        Dim CRC_Recibido As Integer
         Dim largo_recepcion As Integer
 
         Dim refrescar As Boolean = True                                                         ' Supongo que voy a refrescar los datos
@@ -311,12 +212,11 @@ Public Class SP
         Dim path_actual As String
 
 
-        ' Dim cmd_out() As Byte = {&H0, &H0, &H0, &H0, &H0, &H0, &H0}
-        Dim cmd_out() As Byte = {&H0, &H0, &H0, &H0, &H0}                                       ' 
+        Dim cmd_out() As Byte = {&H0, &H0, &H0, &H0, &H0, &H0, &H0}
 
         If TSK_Conectado = True Then                                                            ' Chequeo si el equipo ya está conectado
 
-            largo_recepcion = _serialPort.ReceivedBytesThreshold                                ' guardo la cantidad de bytes recibidos
+            largo_recepcion = _serialPort.ReceivedBytesThreshold
 
             Try
                 _serialPort.Read(cadena_prueba, 0, largo_recepcion)                             ' Pruebo leer
@@ -327,26 +227,24 @@ Public Class SP
 
             If (refrescar) Then                                                                 ' En caso que el dato esté listo
 
-                If Estado_Recepcion <> Estados_Recibir_Datos.RECIBO_ARCHIVO Then                ' Los nombres de archivos vienen sin CRC
-                    ' CRC_Recibido = CRC16(cadena_prueba, largo_recepcion)                        ' Chequeo 
-                    chk_recibido = Checksum(cadena_prueba, LARGO_FRAME)                         ' Recibo esperando la cantidad fija de bytes
-
+                If Estado_Recepcion <> Estados_Recibir_Datos.RECIBO_ARCHIVO Then         ' Los nombres de archivos vienen sin CRC
+                    CRC_Recibido = CRC16(cadena_prueba, largo_recepcion)                        ' Chequeo 
                 End If
 
-                If (chk_recibido = 0) Then
+                If (CRC_Recibido = 0) Then
 
                     Select Case Estado_Recepcion
 
-                        Case Estados_Recibir_Datos.RECIBO_HORA                              ' Primer estado : RECIBO_HORA
+                        Case Estados_Recibir_Datos.RECIBO_HORA
 
-                            tag_ini = Chr(cadena_prueba(TAG_INI_INDICE))                    ' Extraigo byte de tag
+                            tag_ini = Chr(cadena_prueba(TAG_INI_INDICE))
 
-                            If tag_ini = "-" Then                                           ' Si el tag es "-", recibí la hora
+                            If tag_ini = "-" Then
 
-                                hour_BCD = cadena_prueba(1)                                 ' Extraigo byte de hora en BCD
-                                min_BCD = cadena_prueba(2)                                  ' Extraigo byte de minuto en BCD
-                                sec_BCD = cadena_prueba(3)                                  ' Extraigo byte de segundo en BCD
-                                ' ---- Convierto dos digitos para hora, min y seg -----
+                                hour_BCD = cadena_prueba(1)
+                                min_BCD = cadena_prueba(2)
+                                sec_BCD = cadena_prueba(3)
+
                                 hour(1) = Chr(Asc("0") + (hour_BCD And &H10F))
                                 hour(0) = Chr(Asc("0") + ((hour_BCD >> 4) And &H10F))
                                 min(1) = Chr(Asc("0") + (min_BCD And &H10F))
@@ -354,16 +252,15 @@ Public Class SP
                                 sec(1) = Chr(Asc("0") + (sec_BCD And &H10F))
                                 sec(0) = Chr(Asc("0") + ((sec_BCD >> 4) And &H10F))
 
-                                horario = hour & ":" & min & ":" & sec                      ' Armo el string que voy a mostrar en pantalla 
+                                horario = hour & ":" & min & ":" & sec
 
-                            ElseIf tag_ini = "/" Then                                       ' Si el tag es "/", recibo la fecha
+                            ElseIf tag_ini = "/" Then
 
-                                day_BCD = cadena_prueba(1)                                  ' Extraigo byte de día en BCD
-                                mon_BCD = cadena_prueba(2)                                  ' Extraigo byte de mes en BCD
-                                year_BCD_h = cadena_prueba(3)                               ' Extraigo byte alto de año en BCD
-                                year_BCD_l = cadena_prueba(4)                               ' Extraigo byte bajo del año en BCD
+                                day_BCD = cadena_prueba(1)
+                                mon_BCD = cadena_prueba(2)
+                                year_BCD_h = cadena_prueba(3)
+                                year_BCD_l = cadena_prueba(4)
 
-                                ' ---- Convierto los 6 digitos a ASCII : ddmmyyyy ----
                                 day(1) = Chr(Asc("0") + (day_BCD And &H10F))
                                 day(0) = Chr(Asc("0") + ((day_BCD >> 4) And &H10F))
                                 mon(1) = Chr(Asc("0") + (mon_BCD And &H10F))
@@ -371,32 +268,32 @@ Public Class SP
                                 year(1) = Chr(Asc("0") + (year_BCD_h And &H10F))
                                 year(0) = Chr(Asc("0") + ((year_BCD_h >> 4) And &H10F))
 
-                                fecha = day & "/" & mon & "/" & year                        ' Armo string para mostrar en pantalla
+                                fecha = day & "/" & mon & "/" & year
 
                             End If
 
-                        Case Estados_Recibir_Datos.RECIBO_TEMPERATURA                       ' Segundo estado : RECIBO_TEMPERATURA
-
-                            tag_ini = Chr(cadena_prueba(0))                                 ' Copio el primer caracter de la cadena
-
-                            dato_entero = Bytes_a_DWord(cadena_prueba, 1)                   ' Convierto 4 bytes a dword
-
-                            If (tag_ini = "d") Then                                         ' Extraigo tag "d"
-                                adc_medido = dato_entero                                    ' el dword recibido es una medición de ADC
-                            ElseIf (tag_ini = "p") Then                                     ' Extraje el tag "p" ?
-                                Pendiente_Resistencia = dato_entero                         ' Lo que recibí es una pendiente de resistencia
-                            ElseIf (tag_ini = "o") Then                                     ' Extraje el tag "o" ?
-                                Offset_Resistencia = dato_entero                            ' Lo que recibí es offset de resistencia
-                            End If
-
-                        Case Estados_Recibir_Datos.RECIBO_CONDUCTIVIDAD                     ' Tercer estado : RECIBO_CONDUCTIVIDAD
+                        Case Estados_Recibir_Datos.RECIBO_TEMPERATURA
 
                             tag_ini = Chr(cadena_prueba(0))                                     ' Copio el primer caracter de la cadena
 
-                            If (tag_ini = "d") Then                                             ' tag = "d" ?
+                            dato_entero = Bytes_a_DWord(cadena_prueba, 1)
+
+                            If (tag_ini = "d") Then
+                                adc_medido = dato_entero
+                            ElseIf (tag_ini = "p") Then
+                                Pendiente_Resistencia = dato_entero
+                            ElseIf (tag_ini = "o") Then
+                                Offset_Resistencia = dato_entero
+                            End If
+
+                        Case Estados_Recibir_Datos.RECIBO_CONDUCTIVIDAD
+
+                            tag_ini = Chr(cadena_prueba(0))                                     ' Copio el primer caracter de la cadena
+
+                            If (tag_ini = "d") Then
                                 adc_medido_numerador = Bytes_a_Word(cadena_prueba, 1)           ' Recibo las 2 conversiones
                                 adc_medido_denominador = Bytes_a_Word(cadena_prueba, 3)         ' empaquetadas en una cadena. 2 datos de 16 bits c/u
-                                frm_Aguardar_Conductividad.Close()                              ' Cierro formulario "Espere mientras
+                                frm_Aguardar_Conductividad.Close()
                             ElseIf (tag_ini = "i") Then
                                 frm_Aguardar_Conductividad.Close()
                                 adc_medido_numerador = Bytes_a_DWord(cadena_prueba, 1)
@@ -422,7 +319,6 @@ Public Class SP
                                 ' cls_archivo.stream_in = cls_archivo.stream_in & (enc.GetString(cadena_prueba)).Substring(1)    ' recibo el nombre de un archivo
                                 frm_Obtener_Datos.Extraer_Datos_Stream_Archivo(cadena_prueba, cls_archivo.stream_in)
                             ElseIf tag_ini = "f" Then
-
                                 path_actual = System.AppDomain.CurrentDomain.BaseDirectory
 
                                 cls_archivo.obj_FSO = CreateObject("Scripting.FileSystemObject")
@@ -462,25 +358,6 @@ Public Class SP
 
     End Sub
 
-
-    ' ---------------------------------------------------------------------------------------------
-    '
-    ' @function Enviar_Comando       
-    '
-    ' @brief    Transmisión por     puerto serie  
-    '
-    ' @paramin  cmd_out             comando a escribir a la salida
-    ' @paramin  Insistir            Flag para indicar si el comando debe escribirse hasta recibir una respuesta (confirmatoria o no)
-    ' @paramin  Forzar_Conexion     ??
-    '
-    ' @paramout none
-    ' 
-    ' @author   Roux, Federico G.
-    ' @mail     rouxfederico@gmail.com
-    ' @company  Nerox
-    '
-    ' --------------------------------------------------------------------------------------------- 
-
     Public Shared Function Enviar_Comando(ByVal cmd_out() As Byte, ByVal Insistir As Boolean, Optional ByVal Forzar_Conexion As Boolean = False) As Boolean
 
         Const CONTADOR_INSISTIR = 3
@@ -491,8 +368,7 @@ Public Class SP
         Dim cmd_leido() As Byte = {&H0&, &H0&, &H0&, &H0&, &H0&}
         Dim cmd_esperado() As Byte = {&H0&, &H0&, &H0&, &H0&, &H0&}
 
-        ' Dim CRC_Recibido As Integer
-        Dim Chk_Recibido As Integer
+        Dim CRC_Recibido As Integer
 
         Dim Exito_Envio As Boolean = False
         Dim Timeout_TX As Boolean = False
@@ -500,9 +376,7 @@ Public Class SP
 
         If TSK_Conectado = True Or Forzar_Conexion = True Then
 
-            ' Concatenar_CRC(cmd_out, LARGO_FRAME)                                            ' agrego el CRC
-            Concatenar_CHK(cmd_out, LARGO_FRAME)                                            ' Agrego el CHK
-
+            Concatenar_CRC(cmd_out, LARGO_FRAME)                                            ' agrego el CRC
 
             For cuenta_insistir = 0 To CONTADOR_INSISTIR                                    ' Repito la escritura N veces o hasta que salga bien
 
@@ -524,10 +398,9 @@ Public Class SP
 
                 If Not Timeout_TX Then                                                      ' Pregunto si no hubo un timeout de transmisión
 
-                    ' CRC_Recibido = CRC16(cadena_leida, LARGO_FRAME)                         ' Hago el CRC de la cadena recibida
-                    Chk_Recibido = CRC16(cadena_leida, LARGO_FRAME)                         ' Hago el CHK de la cadena recibida
+                    CRC_Recibido = CRC16(cadena_leida, LARGO_FRAME)                         ' Hago el CRC de la cadena recibida
 
-                    If (Chk_Recibido = 0) Then                                              ' si no hay error de CRC
+                    If (CRC_Recibido = 0) Then                                              ' si no hay error de CRC
 
                         cmd_esperado = Comando_Esperado(cmd_out)                            ' genero el comando que tendría que recibir si esta todo OK
                         cmd_leido = Extraer_Comando(cadena_leida)                           ' extraigo el comando de la cadena leída
@@ -557,78 +430,6 @@ Public Class SP
 End Class
 
 Module Modulo_Comunicacion
-
-    ' ---------------------------------------------------------------------------------------------
-    '
-    ' @function Checksum       
-    '
-    ' @brief    Calculo el checksum de una cadena  
-    '
-    ' @paramin  nData()             Cadena a calcular el checksum
-    ' @paramin  wLength             Largo de la cadena    
-    '
-    ' @paramout none
-    ' 
-    ' @author   Roux, Federico G.
-    ' @mail     rouxfederico@gmail.com
-    ' @company  Nerox
-    '
-    ' --------------------------------------------------------------------------------------------- 
-
-    Public Function Checksum(ByRef nData() As Byte, ByVal wLength As Integer) As Integer
-
-        Dim chk_byte As Integer
-
-
-        Return chk_byte
-
-    End Function
-
-    ' ---------------------------------------------------------------------------------------------
-    '
-    ' @function Concatenar_CHK       
-    '
-    ' @brief    Agrego el checksum a una cadena 
-    '
-    ' @paramin  frame()             Cadena sobre la que calculo el checksum
-    ' @paramin  l_frame             largo de la cadena
-    '
-    ' @paramout 0                   OK
-    ' 
-    ' @author   Roux, Federico G.
-    ' @mail     rouxfederico@gmail.com
-    ' @company  Nerox
-    '
-    ' --------------------------------------------------------------------------------------------- 
-
-    Public Function Concatenar_CHK(ByRef frame() As Byte, ByVal l_frame As Integer) As Integer
-        Dim chk As Integer = 0
-        
-        CRC = CRC16(frame, l_frame - 2)                 ' Calculo el CRC del frame a transmitir
-
-        chk = Checksum(frame, l_frame - 1)
-        frame(l_frame - 1) = chk                        ' Agrego el byte de checksum
-
-        Return 0
-    End Function
-
-    ' ---------------------------------------------------------------------------------------------
-    '
-    ' @function CRC16       
-    '
-    ' @brief    Calculo CRC de 16 bits de una cadena
-    '
-    ' @paramin  nData()             Cadena a calcular el checksum
-    ' @paramin  wLength             Largo de la cadena    
-    '
-    ' @paramout none
-    ' 
-    ' @author   Roux, Federico G.
-    ' @mail     rouxfederico@gmail.com
-    ' @company  Nerox
-    '
-    ' --------------------------------------------------------------------------------------------- 
-
 
     Public Function CRC16(ByRef nData() As Byte, ByVal wLength As Integer) As Integer
 
@@ -689,23 +490,6 @@ Module Modulo_Comunicacion
 
     End Function
 
-    ' ---------------------------------------------------------------------------------------------
-    '
-    ' @function Concatenar_CRC       
-    '
-    ' @brief    Agrego el CRC de 16 bits a una cadena 
-    '
-    ' @paramin  frame()             Cadena sobre la que calculo el checksum
-    ' @paramin  l_frame             largo de la cadena
-    '
-    ' @paramout 0                   OK
-    ' 
-    ' @author   Roux, Federico G.
-    ' @mail     rouxfederico@gmail.com
-    ' @company  Nerox
-    '
-    ' --------------------------------------------------------------------------------------------- 
-
     Public Function Concatenar_CRC(ByRef frame() As Byte, ByVal l_frame As Integer) As Integer
 
         Dim CRC As Integer = 0
@@ -724,23 +508,6 @@ Module Modulo_Comunicacion
 
     End Function
 
-    ' ---------------------------------------------------------------------------------------------
-    '
-    ' @function Decodificar_Comando       
-    '
-    ' @brief    Chequea que el comando sea válido
-    '
-    ' @paramin  frame()             Cadena sobre la que calculo el checksum
-    ' @paramin  l_frame             largo de la cadena
-    '
-    ' @paramout 0                   OK
-    ' 
-    ' @author   Roux, Federico G.
-    ' @mail     rouxfederico@gmail.com
-    ' @company  Nerox
-    '
-    ' --------------------------------------------------------------------------------------------- 
-
     Public Function Decodificar_Comando(ByVal cadena_1() As Byte, ByVal cadena_2() As Byte) As Integer
 
         Dim i As Integer
@@ -756,25 +523,6 @@ Module Modulo_Comunicacion
         Return 0
 
     End Function
-
-
-    ' ---------------------------------------------------------------------------------------------
-    '
-    ' @function Extraer_Comando       
-    '
-    ' @brief    Extraigo el comando de una cadena
-    '
-    ' @paramin  frame()             Cadena sobre la que calculo el checksum
-    ' @paramin  l_frame             largo de la cadena
-    '
-    ' @paramout 0                   OK
-    ' 
-    ' @author   Roux, Federico G.
-    ' @mail     rouxfederico@gmail.com
-    ' @company  Nerox
-    '
-    ' --------------------------------------------------------------------------------------------- 
-
 
     Public Function Extraer_Comando(ByVal cadena() As Byte) As Byte()
 

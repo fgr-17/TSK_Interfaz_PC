@@ -1,0 +1,3 @@
+Public Class frm_Aguardar_Conductividad
+
+End Class

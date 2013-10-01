@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "TSK100_Interfaz", "TSK100_Interfaz\TSK100_Interfaz.vbproj", "{209455D9-BF07-4F21-B331-CE68A57B13FB}"
 EndProject
 Global
