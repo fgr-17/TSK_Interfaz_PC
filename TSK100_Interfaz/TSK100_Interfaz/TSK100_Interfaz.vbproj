@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{209455D9-BF07-4F21-B331-CE68A57B13FB}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <StartupObject>WindowsApplication1.My.MyApplication</StartupObject>
+    <RootNamespace>WindowsApplication1</RootNamespace>
+    <AssemblyName>TSK100_Interfaz</AssemblyName>
+    <MyType>WindowsForms</MyType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>TSK100_Interfaz.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>TSK100_Interfaz.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Data" />
+    <Import Include="System.Drawing" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="frm_Aguardar_Conductividad.Designer.vb">
+      <DependentUpon>frm_Aguardar_Conductividad.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frm_Aguardar_Conductividad.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frm_Aguardar_Descarga.Designer.vb">
+      <DependentUpon>frm_Aguardar_Descarga.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frm_Aguardar_Descarga.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frm_Aguardar_Lista_Archivos.Designer.vb">
+      <DependentUpon>frm_Aguardar_Lista_Archivos.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frm_Aguardar_Lista_Archivos.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frm_Calibracion_Conductividad.Designer.vb">
+      <DependentUpon>frm_Calibracion_Conductividad.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frm_Calibracion_Conductividad.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frm_Calibracion_Temperatura.Designer.vb">
+      <DependentUpon>frm_Calibracion_Temperatura.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frm_Calibracion_Temperatura.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frm_Configuracion.Designer.vb">
+      <DependentUpon>frm_Configuracion.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frm_Configuracion.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frm_Fecha_y_Hora.Designer.vb">
+      <DependentUpon>frm_Fecha_y_Hora.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frm_Fecha_y_Hora.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frm_Inicializar_Comunicacion.Designer.vb">
+      <DependentUpon>frm_Inicializar_Comunicacion.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frm_Inicializar_Comunicacion.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frm_Obtener_Datos.Designer.vb">
+      <DependentUpon>frm_Obtener_Datos.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frm_Obtener_Datos.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frm_Parametros.Designer.vb">
+      <DependentUpon>frm_Parametros.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frm_Parametros.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Modulos\Modulo_Cadenas.vb" />
+    <Compile Include="Modulos\Modulo_Comunicacion.vb" />
+    <Compile Include="Modulos\Modulo_Kernel.vb" />
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="TSK100_Interfaz.Designer.vb">
+      <DependentUpon>TSK100_Interfaz.vb</DependentUpon>
+    </Compile>
+    <Compile Include="TSK100_Interfaz.vb">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="frm_Aguardar_Conductividad.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frm_Aguardar_Conductividad.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frm_Aguardar_Descarga.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frm_Aguardar_Descarga.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frm_Aguardar_Lista_Archivos.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frm_Aguardar_Lista_Archivos.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frm_Calibracion_Conductividad.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frm_Calibracion_Conductividad.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frm_Calibracion_Temperatura.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frm_Calibracion_Temperatura.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frm_Configuracion.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frm_Configuracion.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frm_Fecha_y_Hora.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frm_Fecha_y_Hora.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frm_Inicializar_Comunicacion.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frm_Inicializar_Comunicacion.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frm_Obtener_Datos.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frm_Obtener_Datos.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frm_Parametros.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frm_Parametros.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TSK100_Interfaz.resx">
+      <DependentUpon>TSK100_Interfaz.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <CustomToolNamespace>My</CustomToolNamespace>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TSK100_CONFIGURACION_DESCONECTADO.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TSK100_CONFIGURACION_CONECTADO.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TSK100_CONFIGURACION_REPETIDOR.jpg" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
