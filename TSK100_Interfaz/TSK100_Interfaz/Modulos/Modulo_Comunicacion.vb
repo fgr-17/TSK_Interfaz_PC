@@ -577,7 +577,15 @@ Module Modulo_Comunicacion
 
     Public Function Checksum(ByRef nData() As Byte, ByVal wLength As Integer) As Integer
 
-        Dim chk_byte As Integer
+        Dim chk_byte As Byte = 0                                            ' Calculo del checksum
+        Dim i As Integer = 0                                                ' Índice del array que recorro
+
+        wLength = wLength - 1                                               ' Decremento la cantidad
+
+        While (i < wLength)                                                ' Llegué al final?
+            chk_byte = chk_byte - nData(i)                                  ' resto el valor del dato
+            i = i + 1                                                       ' Incremento al siguiente ítem
+        End While
 
 
         Return chk_byte
@@ -603,7 +611,7 @@ Module Modulo_Comunicacion
 
     Public Function Concatenar_CHK(ByRef frame() As Byte, ByVal l_frame As Integer) As Integer
         Dim chk As Integer = 0
-        
+
         CRC = CRC16(frame, l_frame - 2)                 ' Calculo el CRC del frame a transmitir
 
         chk = Checksum(frame, l_frame - 1)

@@ -1,3 +1,6 @@
 C:\Documents and Settings\fede\workspace_v5_1\visual_studio\TSK100_Interfaz\TSK100_Interfaz\obj\Debug\TSK100_Interfaz.exe
 C:\Documents and Settings\fede\workspace_v5_1\visual_studio\TSK100_Interfaz\TSK100_Interfaz\obj\Debug\TSK100_Interfaz.xml
 C:\Documents and Settings\fede\workspace_v5_1\visual_studio\TSK100_Interfaz\TSK100_Interfaz\obj\Debug\TSK100_Interfaz.pdb
+C:\Documents and Settings\fede\Mis documentos\TSK100\Interfaz_PC_TSK_Soft_Rep\TSK100_Interfaz\TSK100_Interfaz\obj\Debug\TSK100_Interfaz.exe
+C:\Documents and Settings\fede\Mis documentos\TSK100\Interfaz_PC_TSK_Soft_Rep\TSK100_Interfaz\TSK100_Interfaz\obj\Debug\TSK100_Interfaz.xml
+C:\Documents and Settings\fede\Mis documentos\TSK100\Interfaz_PC_TSK_Soft_Rep\TSK100_Interfaz\TSK100_Interfaz\obj\Debug\TSK100_Interfaz.pdb
