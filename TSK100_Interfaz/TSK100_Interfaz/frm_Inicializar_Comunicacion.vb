@@ -11,7 +11,8 @@ Public Class frm_Inicializar_Comunicacion
 
         Dim COM_Seleccionado As String
         Dim cadena_leida() As Byte = {&H0&, &H0&, &H0&, &H0&, &H0&, &H0&, &H0&}
-        Dim cmd_out() As Byte = {&H0, &H0, &H0, &H0, &H0, &H0, &H0}
+        ' Dim cmd_out() As Byte = {&H0, &H0, &H0, &H0, &H0, &H0, &H0}
+        Dim cmd_out() As Byte = {&H0, &H0, &H0, &H0}
         COM_Seleccionado = C_Puertos.Text                                                       ' Guardo el puerto COM seleccionad
 
         If COM_Seleccionado = "" Then                                                           ' Pregunto si se seleccionó algún item

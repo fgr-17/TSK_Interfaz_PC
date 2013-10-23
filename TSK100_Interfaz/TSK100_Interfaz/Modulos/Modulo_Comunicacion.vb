@@ -296,6 +296,7 @@ Public Class SP
 
         ' Tag de inicio y fin de cadena para validación
         Dim tag_ini As Char
+        Dim tag_bin As Byte
 
         ' Variables asociadas a la transmisión de strings
         Dim cadena_prueba() As Byte = {&H0, &H0, &H0, &H0, &H0, &H0, &H0, &H0, &H0, &H0, _
@@ -339,13 +340,14 @@ Public Class SP
 
                         Case Estados_Recibir_Datos.RECIBO_HORA                              ' Primer estado : RECIBO_HORA
 
-                            tag_ini = Chr(cadena_prueba(TAG_INI_INDICE))                    ' Extraigo byte de tag
+                            ' tag_ini = Chr(cadena_prueba(TAG_INI_INDICE))                  ' Extraigo byte de tag
+                            tag_bin = (cadena_prueba(TAG_INI_INDICE) And &HD0) >> 5          ' Extraigo bits de tag t2t1t0x-xxxx
 
-                            If tag_ini = "-" Then                                           ' Si el tag es "-", recibí la hora
+                            If tag_bin = &H100 Then                                           ' Si el tag es "-", recibí la hora
 
-                                hour_BCD = cadena_prueba(1)                                 ' Extraigo byte de hora en BCD
-                                min_BCD = cadena_prueba(2)                                  ' Extraigo byte de minuto en BCD
-                                sec_BCD = cadena_prueba(3)                                  ' Extraigo byte de segundo en BCD
+                                hour_BCD = cadena_prueba(0) And &H1F                        ' Extraigo byte de hora en BCD enmascarando bits de tag
+                                min_BCD = cadena_prueba(1)                                  ' Extraigo byte de minuto en BCD
+                                sec_BCD = cadena_prueba(2)                                  ' Extraigo byte de segundo en BCD
                                 ' ---- Convierto dos digitos para hora, min y seg -----
                                 hour(1) = Chr(Asc("0") + (hour_BCD And &H10F))
                                 hour(0) = Chr(Asc("0") + ((hour_BCD >> 4) And &H10F))
@@ -356,12 +358,12 @@ Public Class SP
 
                                 horario = hour & ":" & min & ":" & sec                      ' Armo el string que voy a mostrar en pantalla 
 
-                            ElseIf tag_ini = "/" Then                                       ' Si el tag es "/", recibo la fecha
+                            ElseIf tag_bin = &H10 Then                                       ' Si el tag es "/", recibo la fecha
 
-                                day_BCD = cadena_prueba(1)                                  ' Extraigo byte de día en BCD
+                                day_BCD = cadena_prueba(1) And &H1F                        ' Extraigo byte de día en BCD
                                 mon_BCD = cadena_prueba(2)                                  ' Extraigo byte de mes en BCD
-                                year_BCD_h = cadena_prueba(3)                               ' Extraigo byte alto de año en BCD
-                                year_BCD_l = cadena_prueba(4)                               ' Extraigo byte bajo del año en BCD
+                                ' year_BCD_h = cadena_prueba(3)                               ' Extraigo byte alto de año en BCD
+                                year_BCD_l = cadena_prueba(3)                               ' Extraigo byte bajo del año en BCD
 
                                 ' ---- Convierto los 6 digitos a ASCII : ddmmyyyy ----
                                 day(1) = Chr(Asc("0") + (day_BCD And &H10F))
@@ -487,8 +489,10 @@ Public Class SP
 
         Dim cuenta_insistir As Integer = 0
 
-        Dim cadena_leida() As Byte = {&H0&, &H0&, &H0&, &H0&, &H0&, &H0&, &H0&}
-        Dim cmd_leido() As Byte = {&H0&, &H0&, &H0&, &H0&, &H0&}
+        ' Dim cadena_leida() As Byte = {&H0&, &H0&, &H0&, &H0&, &H0&, &H0&, &H0&}
+        Dim cadena_leida() As Byte = {&H0&, &H0&, &H0&, &H0&}
+        ' Dim cmd_leido() As Byte = {&H0&, &H0&, &H0&, &H0&, &H0&}
+        Dim cmd_leido As Byte
         Dim cmd_esperado() As Byte = {&H0&, &H0&, &H0&, &H0&, &H0&}
 
         ' Dim CRC_Recibido As Integer
@@ -524,18 +528,17 @@ Public Class SP
 
                 If Not Timeout_TX Then                                                      ' Pregunto si no hubo un timeout de transmisión
 
-                    ' CRC_Recibido = CRC16(cadena_leida, LARGO_FRAME)                         ' Hago el CRC de la cadena recibida
-                    Chk_Recibido = CRC16(cadena_leida, LARGO_FRAME)                         ' Hago el CHK de la cadena recibida
+                    ' CRC_Recibido = CRC16(cadena_leida, LARGO_FRAME)                           ' Hago el CRC de la cadena recibida
+                    Chk_Recibido = Checksum(cadena_leida, LARGO_FRAME)                      ' Hago el CHK de la cadena recibida
 
                     If (Chk_Recibido = 0) Then                                              ' si no hay error de CRC
 
-                        cmd_esperado = Comando_Esperado(cmd_out)                            ' genero el comando que tendría que recibir si esta todo OK
-                        cmd_leido = Extraer_Comando(cadena_leida)                           ' extraigo el comando de la cadena leída
-
-                        If (Decodificar_Comando(cmd_esperado, cmd_leido) = 0) Then          ' si es igual al comando leido
+                        ' cmd_esperado = Comando_Esperado(cmd_out)                          ' genero el comando que tendría que recibir si esta todo OK
+                        ' cmd_leido = Extraer_Comando(cadena_leida)                           ' extraigo el comando de la cadena leída
+                        cmd_leido = cadena_leida(0)
+                        If (Decodificar_Byte_Comando(cadena_leida) = 0) Then                ' si es igual al comando leido
                             Insistir = False                                                ' si está todo OK, no insisto
                             Exito_Envio = True
-
                             Return Exito_Envio
                         Else
                             ' MsgBox("El comando no fue validado", MsgBoxStyle.Exclamation, "Error de Comunicación")
@@ -580,10 +583,14 @@ Module Modulo_Comunicacion
         Dim chk_byte As Byte = 0                                            ' Calculo del checksum
         Dim i As Integer = 0                                                ' Índice del array que recorro
 
-        wLength = wLength - 1                                               ' Decremento la cantidad
+        Dim aux As Byte
+
+        ' wLength = wLength - 1                                               ' Decremento la cantidad
 
         While (i < wLength)                                                ' Llegué al final?
-            chk_byte = chk_byte - nData(i)                                  ' resto el valor del dato
+
+            aux = nData(i)
+            chk_byte = (CLng(chk_byte) - CLng(aux)) And &HFF                                  ' resto el valor del dato
             i = i + 1                                                       ' Incremento al siguiente ítem
         End While
 
@@ -612,96 +619,18 @@ Module Modulo_Comunicacion
     Public Function Concatenar_CHK(ByRef frame() As Byte, ByVal l_frame As Integer) As Integer
         Dim chk As Integer = 0
 
-        CRC = CRC16(frame, l_frame - 2)                 ' Calculo el CRC del frame a transmitir
-
         chk = Checksum(frame, l_frame - 1)
         frame(l_frame - 1) = chk                        ' Agrego el byte de checksum
 
         Return 0
     End Function
 
+    
     ' ---------------------------------------------------------------------------------------------
     '
-    ' @function CRC16       
+    ' @function Decodificar_Byte_Comando       
     '
-    ' @brief    Calculo CRC de 16 bits de una cadena
-    '
-    ' @paramin  nData()             Cadena a calcular el checksum
-    ' @paramin  wLength             Largo de la cadena    
-    '
-    ' @paramout none
-    ' 
-    ' @author   Roux, Federico G.
-    ' @mail     rouxfederico@gmail.com
-    ' @company  Nerox
-    '
-    ' --------------------------------------------------------------------------------------------- 
-
-
-    Public Function CRC16(ByRef nData() As Byte, ByVal wLength As Integer) As Integer
-
-
-        Dim wCRCTable() As Integer = New Integer() _
-                            {&H0, &HC0C1, &HC181, &H140, &HC301, &H3C0, &H280, &HC241, _
-                            &HC601, &H6C0, &H780, &HC741, &H500, &HC5C1, &HC481, &H440, _
-                            &HCC01, &HCC0, &HD80, &HCD41, &HF00, &HCFC1, &HCE81, &HE40, _
-                            &HA00, &HCAC1, &HCB81, &HB40, &HC901, &H9C0, &H880, &HC841, _
-                            &HD801, &H18C0, &H1980, &HD941, &H1B00, &HDBC1, &HDA81, &H1A40, _
-                            &H1E00, &HDEC1, &HDF81, &H1F40, &HDD01, &H1DC0, &H1C80, &HDC41, _
-                            &H1400, &HD4C1, &HD581, &H1540, &HD701, &H17C0, &H1680, &HD641, _
-                            &HD201, &H12C0, &H1380, &HD341, &H1100, &HD1C1, &HD081, &H1040, _
-                            &HF001, &H30C0, &H3180, &HF141, &H3300, &HF3C1, &HF281, &H3240, _
-                            &H3600, &HF6C1, &HF781, &H3740, &HF501, &H35C0, &H3480, &HF441, _
-                            &H3C00, &HFCC1, &HFD81, &H3D40, &HFF01, &H3FC0, &H3E80, &HFE41, _
-                            &HFA01, &H3AC0, &H3B80, &HFB41, &H3900, &HF9C1, &HF881, &H3840, _
-                            &H2800, &HE8C1, &HE981, &H2940, &HEB01, &H2BC0, &H2A80, &HEA41, _
-                            &HEE01, &H2EC0, &H2F80, &HEF41, &H2D00, &HEDC1, &HEC81, &H2C40, _
-                            &HE401, &H24C0, &H2580, &HE541, &H2700, &HE7C1, &HE681, &H2640, _
-                            &H2200, &HE2C1, &HE381, &H2340, &HE101, &H21C0, &H2080, &HE041, _
-                            &HA001, &H60C0, &H6180, &HA141, &H6300, &HA3C1, &HA281, &H6240, _
-                            &H6600, &HA6C1, &HA781, &H6740, &HA501, &H65C0, &H6480, &HA441, _
-                            &H6C00, &HACC1, &HAD81, &H6D40, &HAF01, &H6FC0, &H6E80, &HAE41, _
-                            &HAA01, &H6AC0, &H6B80, &HAB41, &H6900, &HA9C1, &HA881, &H6840, _
-                            &H7800, &HB8C1, &HB981, &H7940, &HBB01, &H7BC0, &H7A80, &HBA41, _
-                            &HBE01, &H7EC0, &H7F80, &HBF41, &H7D00, &HBDC1, &HBC81, &H7C40, _
-                            &HB401, &H74C0, &H7580, &HB541, &H7700, &HB7C1, &HB681, &H7640, _
-                            &H7200, &HB2C1, &HB381, &H7340, &HB101, &H71C0, &H7080, &HB041, _
-                            &H5000, &H90C1, &H9181, &H5140, &H9301, &H53C0, &H5280, &H9241, _
-                            &H9601, &H56C0, &H5780, &H9741, &H5500, &H95C1, &H9481, &H5440, _
-                            &H9C01, &H5CC0, &H5D80, &H9D41, &H5F00, &H9FC1, &H9E81, &H5E40, _
-                            &H5A00, &H9AC1, &H9B81, &H5B40, &H9901, &H59C0, &H5880, &H9841, _
-                            &H8801, &H48C0, &H4980, &H8941, &H4B00, &H8BC1, &H8A81, &H4A40, _
-                            &H4E00, &H8EC1, &H8F81, &H4F40, &H8D01, &H4DC0, &H4C80, &H8C41, _
-                            &H4400, &H84C1, &H8581, &H4540, &H8701, &H47C0, &H4680, &H8641, _
-                            &H8201, &H42C0, &H4380, &H8341, &H4100, &H81C1, &H8081, &H4040}
-
-        Dim nTemp As Byte
-        Dim wCRCWord As Integer = &HFFFF
-        Dim nData_index As Integer = 0
-
-
-
-        While (wLength > 0)
-
-            nTemp = (nData(nData_index) Xor wCRCWord) And &HFF&
-
-            nData_index = nData_index + 1
-            wCRCWord = wCRCWord >> 8
-            wCRCWord = wCRCWord Xor wCRCTable(nTemp)
-
-            wLength = wLength - 1
-
-        End While
-
-        Return wCRCWord
-
-    End Function
-
-    ' ---------------------------------------------------------------------------------------------
-    '
-    ' @function Concatenar_CRC       
-    '
-    ' @brief    Agrego el CRC de 16 bits a una cadena 
+    ' @brief    Chequea que el comando sea válido
     '
     ' @paramin  frame()             Cadena sobre la que calculo el checksum
     ' @paramin  l_frame             largo de la cadena
@@ -714,21 +643,49 @@ Module Modulo_Comunicacion
     '
     ' --------------------------------------------------------------------------------------------- 
 
-    Public Function Concatenar_CRC(ByRef frame() As Byte, ByVal l_frame As Integer) As Integer
+    Public Const DEC_FRAME_OK = 0
 
-        Dim CRC As Integer = 0
-        Dim CRC_Alto As Byte
-        Dim CRC_Bajo As Byte
+    Public Const DEC_COMANDO_NO_VALIDO = -1
+    Public Const DEC_DATOS_DESIGUALES = -2
+    Public Const DEC_ERROR_CHK = -3
+    Public Const DEC_ERROR_CTX = -4
+    Public Const DAT_ERROR_DES = -5
 
-        CRC = CRC16(frame, l_frame - 2)                 ' Calculo el CRC del frame a transmitir
+    Public Function Decodificar_Byte_Comando(ByVal Frame() As Byte) As Integer
 
-        CRC_Bajo = CRC And &HFF&                        ' Extraigo la parte baja del CRC de 16bits
-        CRC_Alto = (CRC And &HFF00&) >> 8               ' Extraigo la parte alta del CRC de 16bits
+        Dim cmd, d1, d0, chk As Byte
 
-        frame(l_frame - 2) = CRC_Bajo                   ' Modifico los valores para agregar el CRC
-        frame(l_frame - 1) = CRC_Alto                   ' Parte alta del CRC
+        cmd = Frame(0)                                                              ' Extraigo comando
+        d1 = Frame(1)                                                               ' Extraigo dato parte alta
+        d0 = Frame(2)                                                               ' Extraigo parte baja del dato
+        chk = Frame(3)                                                              ' Extraigo checksum
 
-        Return 0
+        If (cmd < CMD_OFFSET) Or (cmd > (CMD_OFFSET + CANT_COMANDOS)) Then          ' Pregunto si el comando está en rango
+            Return DEC_COMANDO_NO_VALIDO                                            ' Sino, retorno comando no válido
+        End If
+
+        If (d1 <> d0) Then                                                          ' Pregunto si los datos son diferentes
+            Return DEC_DATOS_DESIGUALES                                             ' Devuelvo datos desiguales
+        End If
+
+        Select Case d0                                                              ' Analizo el byte de dato
+            Case DATO_RECEPCION_OK                                                  ' Pregunto si recibí dato OK
+                Return DEC_FRAME_OK
+            Case DATO_ERROR_CHK                                                     ' El micro recibió con checksum erroneo
+                Return DEC_ERROR_CHK
+            Case DATO_ERROR_CTX                                                     ' El micro recibió comando fuera de contexto
+                Return DEC_ERROR_CTX
+            Case DATO_ERROR_DES                                                     ' El micro recibió error desconocido
+                Return DAT_ERROR_DES
+
+        End Select
+
+
+
+
+
+
+
 
     End Function
 
@@ -765,15 +722,13 @@ Module Modulo_Comunicacion
 
     End Function
 
-
     ' ---------------------------------------------------------------------------------------------
     '
-    ' @function Extraer_Comando       
+    ' @function Estado_Dato_Frame   
     '
-    ' @brief    Extraigo el comando de una cadena
+    ' @brief    Chequeo el estado de un frame comprobando que los datos sean iguales y los interpreto
     '
-    ' @paramin  frame()             Cadena sobre la que calculo el checksum
-    ' @paramin  l_frame             largo de la cadena
+    ' @paramin  frame()             Cadena a analizar
     '
     ' @paramout 0                   OK
     ' 
@@ -783,6 +738,32 @@ Module Modulo_Comunicacion
     '
     ' --------------------------------------------------------------------------------------------- 
 
+
+    Public Function Estado_Dato_Frame(ByVal frame() As Byte) As Integer
+
+        'Select Case (
+
+
+        Return 0
+    End Function
+
+
+    ' ---------------------------------------------------------------------------------------------
+    '
+    ' @function Extraer_Comando       
+    '
+    ' @brief    Extraigo el comando de una cadena
+    '
+    ' @paramin  frame()         Cadena sobre la que calculo el checksum
+    ' @paramin  l_frame         largo de la cadena
+    '
+    ' @paramout 0               OK
+    ' 
+    ' @author   Roux, Federico G.
+    ' @mail     rouxfederico@gmail.com
+    ' @company  Nerox
+    '
+    ' --------------------------------------------------------------------------------------------- 
 
     Public Function Extraer_Comando(ByVal cadena() As Byte) As Byte()
 

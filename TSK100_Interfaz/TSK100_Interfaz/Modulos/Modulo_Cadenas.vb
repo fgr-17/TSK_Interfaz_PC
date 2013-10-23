@@ -26,46 +26,46 @@ Module Modulo_Cadenas
 
     Public Const CMD_OFFSET = &H7&                                              ' Valor inicial del comando con valor mínimo
 
-    Public Const ESTAS = CMD_OFFSET                                             ' Inicio de la comunicación
+    Public Const ESTAS As Byte = CMD_OFFSET                                             ' Inicio de la comunicación
 
-    Public Const CONFI = CMD_OFFSET + 1                                         ' Modo de configuración														
+    Public Const CONFI As Byte = CMD_OFFSET + 1                                         ' Modo de configuración														
 
-    Public Const INIMA = CMD_OFFSET + 2                                         ' Inicializo el equipo como master
-    Public Const INIMS_MINUS = CMD_OFFSET + 3                                   ' Inicializo la medición del master --> ES LA RESPUESTA OK DEL SLAVE A "inims"
-    Public Const FINMM = CMD_OFFSET + 4                                         ' Finalizo la medición del master
+    Public Const INIMA As Byte = CMD_OFFSET + 2                                         ' Inicializo el equipo como master
+    Public Const INIMS_MINUS As Byte = CMD_OFFSET + 3                                   ' Inicializo la medición del master --> ES LA RESPUESTA OK DEL SLAVE A "inims"
+    Public Const FINMM As Byte = CMD_OFFSET + 4                                         ' Finalizo la medición del master
 
-    Public Const INIMS = CMD_OFFSET + 5                                         ' Inicializo la medición del slave
-    Public Const FINMS = CMD_OFFSET + 6                                         ' Finalizo la medición del slave
+    Public Const INIMS As Byte = CMD_OFFSET + 5                                         ' Inicializo la medición del slave
+    Public Const FINMS As Byte = CMD_OFFSET + 6                                         ' Finalizo la medición del slave
 
-    Public Const INICK = CMD_OFFSET + 7                                         ' Inicio la calibración de conductividad
-    Public Const FINCK = CMD_OFFSET + 8                                         ' Finalizo la calibración de conductividad
-    Public Const CANCK = CMD_OFFSET + 9                                         ' Cancelo la calibración de conductividad
-    Public Const OKACK = CMD_OFFSET + 10                                        ' La calibración de conductividad está OK
-    Public Const FAICK = CMD_OFFSET + 11                                        ' La calibración de conductividad falló
+    Public Const INICK As Byte = CMD_OFFSET + 7                                         ' Inicio la calibración de conductividad
+    Public Const FINCK As Byte = CMD_OFFSET + 8                                         ' Finalizo la calibración de conductividad
+    Public Const CANCK As Byte = CMD_OFFSET + 9                                         ' Cancelo la calibración de conductividad
+    Public Const OKACK As Byte = CMD_OFFSET + 10                                        ' La calibración de conductividad está OK
+    Public Const FAICK As Byte = CMD_OFFSET + 11                                        ' La calibración de conductividad falló
 
-    Public Const INICT = CMD_OFFSET + 12                                        ' Inicio la calibración de temperatura
-    Public Const FINCT = CMD_OFFSET + 13                                        ' Finalizo la calibración de temperatura
-    Public Const CANCT = CMD_OFFSET + 14                                        ' Cancelo la calibración de temperatura
-    Public Const OKACT = CMD_OFFSET + 15                                        ' La calibración de temperatura está OK 
-    Public Const FAICT = CMD_OFFSET + 16                                        ' La calibración de temperatura falló
+    Public Const INICT As Byte = CMD_OFFSET + 12                                        ' Inicio la calibración de temperatura
+    Public Const FINCT As Byte = CMD_OFFSET + 13                                        ' Finalizo la calibración de temperatura
+    Public Const CANCT As Byte = CMD_OFFSET + 14                                        ' Cancelo la calibración de temperatura
+    Public Const OKACT As Byte = CMD_OFFSET + 15                                        ' La calibración de temperatura está OK 
+    Public Const FAICT As Byte = CMD_OFFSET + 16                                        ' La calibración de temperatura falló
 
-    Public Const ARCOK = CMD_OFFSET + 17                                        ' La PC confirmó haber recibido un dato
+    Public Const ARCOK As Byte = CMD_OFFSET + 17                                        ' La PC confirmó haber recibido un dato
 
-    Public Const INIDE = CMD_OFFSET + 18                                        ' Inicio la descarga de datos de archivo (logger) 
-    Public Const SEFYH = CMD_OFFSET + 19                                        ' Seteo fecha y hora al equipo
+    Public Const INIDE As Byte = CMD_OFFSET + 18                                        ' Inicio la descarga de datos de archivo (logger) 
+    Public Const SEFYH As Byte = CMD_OFFSET + 19                                        ' Seteo fecha y hora al equipo
 
-    Public Const REUMB = CMD_OFFSET + 20                                        ' Recibo nivel de alarma 
-    Public Const REALA = CMD_OFFSET + 21                                        ' Recibo nivel de umbral
+    Public Const REUMB As Byte = CMD_OFFSET + 20                                        ' Recibo nivel de alarma 
+    Public Const REALA As Byte = CMD_OFFSET + 21                                        ' Recibo nivel de umbral
 
-    Public Const INIRE = CMD_OFFSET + 22                                        ' Inicializo al Master como repetidor
-    Public Const FINRE = CMD_OFFSET + 23                                        ' Finalizo al Master como repetidor
+    Public Const INIRE As Byte = CMD_OFFSET + 22                                        ' Inicializo al Master como repetidor
+    Public Const FINRE As Byte = CMD_OFFSET + 23                                        ' Finalizo al Master como repetidor
 
-    Public Const DATOK = CMD_OFFSET + 24
-    Public Const DATOT = CMD_OFFSET + 25
+    Public Const DATOK As Byte = CMD_OFFSET + 24
+    Public Const DATOT As Byte = CMD_OFFSET + 25
 
-    Public Const DUMMY = CMD_OFFSET + 26
+    Public Const DUMMY As Byte = CMD_OFFSET + 26
 
-
+    Public Const CANT_COMANDOS As Byte = 26                                             ' Cantidad total de comandos
 
     Public lista_de_comandos(,) As Byte = _
                                         {{ESTAS, 0, 0, 0}, _
@@ -184,7 +184,7 @@ Module Modulo_Cadenas
 
     Public Function Seleccionar_Comando(ByVal n_comando As Integer) As Byte()
 
-        Dim comando_ret(LARGO_FRAME) As Byte
+        Dim comando_ret(0 To LARGO_FRAME - 1) As Byte
         Dim i As Integer
 
         For i = 0 To LARGO_FRAME - 1
@@ -209,17 +209,34 @@ Module Modulo_Cadenas
     ' @company  Nerox
     '
     ' ---------------------------------------------------------------------------------------------
+    Public Const DATO_ENVIO = &H0                              ' Valor del dato al enviar un comando
+    Public Const DATO_RECEPCION_OK = &HAA                      ' Valor del dato al confirmar recepción correcta
+    Public Const DATO_ERROR_CHK = &HFF                      ' Valor del dato para señalar error de checksum
+    Public Const DATO_ERROR_CTX = &H55                  ' Valor del dato para señalar error de contexto
+    Public Const DATO_ERROR_DES = &H11                      ' Error desconocido
 
-    Public Function Comando_Esperado(ByVal comando() As Byte) As Byte()
-        Dim cmd_esperado() As Byte
+    ' Public Function Dato_Esperado(ByVal comando() As Byte) As Byte()
 
-        cmd_esperado = comando
-        If cmd_esperado(0) > (Asc("a") - Asc("A")) Then
-            cmd_esperado(0) = cmd_esperado(0) - (Asc("a") - Asc("A"))
-        End If
+    ' Dim dato_esperado() As Byte
 
-        Return cmd_esperado
-    End Function
+    '    cmd_esperado = comando
+    '    If cmd_esperado(0) > (Asc("a") - Asc("A")) Then
+    '        cmd_esperado(0) = cmd_esperado(0) - (Asc("a") - Asc("A"))
+    '    End If
+
+    '    Return cmd_esperado
+    ' End Function
+
+    'Public Function Comando_Esperado(ByVal comando() As Byte) As Byte()
+    '    Dim cmd_esperado() As Byte
+
+    '    cmd_esperado = comando
+    '    If cmd_esperado(0) > (Asc("a") - Asc("A")) Then
+    '        cmd_esperado(0) = cmd_esperado(0) - (Asc("a") - Asc("A"))
+    '    End If
+
+    '    Return cmd_esperado
+    'End Function
 
     ' ---------------------------------------------------------------------------------------------
     '
@@ -242,14 +259,14 @@ Module Modulo_Cadenas
         ' Máscaras para obtener cada byte por separado
         Const NIBBLE_BYTE0_MASK = &HFF
         Const NIBBLE_BYTE1_MASK = &HFF00
-        Const NIBBLE_BYTE2_MASK = &HFF0000
-        Const NIBBLE_BYTE3_MASK = &HFF000000
+        'Const NIBBLE_BYTE2_MASK = &HFF0000
+        'Const NIBBLE_BYTE3_MASK = &HFF000000
 
         ' Desplazamiento en bits de cada nibble
         Const NIBBLE_BYTE0_BIT = 0
         Const NIBBLE_BYTE1_BIT = 8
-        Const NIBBLE_BYTE2_BIT = 16
-        Const NIBBLE_BYTE3_BIT = 24
+        'Const NIBBLE_BYTE2_BIT = 16
+        'Const NIBBLE_BYTE3_BIT = 24
 
         ' Dato separado en 4 bytes
         Dim dato_byte0 As Byte
